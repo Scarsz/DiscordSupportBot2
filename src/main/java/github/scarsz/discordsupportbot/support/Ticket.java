@@ -28,8 +28,8 @@ import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -292,7 +292,7 @@ public class Ticket extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        if (!event.getChannel().equals(getChannel())) return;
+        if (!event.getChannel().equals(getChannel()) || event.getAuthor() == null || event.getJDA().getSelfUser().equals(event.getAuthor())) return;
         Role ticketMasterRole = helpdesk.getConfig().getTicketMasterRole();
         if (event.getAuthor().isBot() && !event.getAuthor().equals(event.getJDA().getSelfUser())) {
             setStatus(Status.RESPONDED);
@@ -332,12 +332,16 @@ public class Ticket extends ListenerAdapter {
     }
 
     private void setStatus(Status status, Member cause, boolean queue) {
+        boolean sameState = this.status == status;
         this.status = status;
+//        System.out.println("Set status: " + status.name() + "\n" + Arrays.stream(ExceptionUtils.getStackFrames(new Throwable()))
+//                .filter(s -> s.contains("github.scarsz") || s.contains(".jda."))
+//                .skip(1)
+//                .collect(Collectors.joining("\n"))
+//        );
         flush();
         ChannelManager setTopic = getChannel().getManager().setTopic("Status: " + status.toString() + " | Ticket author: <@" + getAuthorId() + ">");
         if (queue) setTopic.queue(); else setTopic.complete();
-
-        //System.out.println("Set status: " + status.getName() + "\n" + Arrays.stream(ExceptionUtils.getStackFrames(new Throwable())).filter(s -> s.contains("github.scarsz")).skip(1).collect(Collectors.joining("\n")));
 
         switch (status) {
             case GATHERING_INFO:
@@ -394,6 +398,7 @@ public class Ticket extends ListenerAdapter {
                 setStatus(Status.AWAITING_RESPONSE);
                 break;
             case SOLVED:
+                if (sameState) break;
                 getChannel().sendMessage(new EmbedBuilder()
                         .setColor(Color.GREEN)
                         .setTitle("Ticket has been marked as solved!")
