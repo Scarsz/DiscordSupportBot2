@@ -7,7 +7,6 @@ import github.scarsz.discordsupportbot.util.FooterUtil;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Category;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -61,19 +60,19 @@ public class SetupListener extends ListenerAdapter {
                     ).queue();
                 }
 
-                if (event.getGuild().getRequiredMFALevel() == Guild.MFALevel.TWO_FACTOR_AUTH) {
-                    pc.sendMessage(new EmbedBuilder()
-                            .setColor(Color.RED)
-                            .setTitle("MFA (multi-factor authentication) enforcement is enabled")
-                            .setDescription("You can't have MFA required for servers where bots do administrative functions- the support bot is no exception to this." +
-                                    "\n\n" +
-                                    "You must disable the MFA requirement for the server in order for bots to perform administrative tasks. " +
-                                    "In the case of the support bot, managing channels is an example of this." +
-                                    "\n\n" +
-                                    "The bot will **__NOT__** perform properly until this is addressed.")
-                            .build()
-                    ).queue();
-                }
+//                if (event.getGuild().getRequiredMFALevel() == Guild.MFALevel.TWO_FACTOR_AUTH) {
+//                    pc.sendMessage(new EmbedBuilder()
+//                            .setColor(Color.RED)
+//                            .setTitle("MFA (multi-factor authentication) enforcement is enabled")
+//                            .setDescription("You can't have MFA required for servers where bots do administrative functions- the support bot is no exception to this." +
+//                                    "\n\n" +
+//                                    "You must disable the MFA requirement for the server in order for bots to perform administrative tasks. " +
+//                                    "In the case of the support bot, managing channels is an example of this." +
+//                                    "\n\n" +
+//                                    "The bot will **__NOT__** perform properly until this is addressed.")
+//                            .build()
+//                    ).queue();
+//                }
             });
         }).start();
     }
