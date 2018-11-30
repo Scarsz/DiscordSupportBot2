@@ -177,9 +177,9 @@ public class SupportBot {
             if (owners.contains(member.getUser())) {
                 controller.modifyMemberRoles(member, Collections.singleton(guildOwnerRole), Arrays.asList(guildAdministratorRole, vagabondRole)).queue();
             } else if (admins.contains(member.getUser())) {
-                controller.modifyMemberRoles(member, Collections.singleton(guildAdministratorRole), Arrays.asList(guildOwnerRole, vagabondRole)).complete();
+                controller.modifyMemberRoles(member, Collections.singleton(guildAdministratorRole), Arrays.asList(guildOwnerRole, vagabondRole)).queue();
             } else {
-                controller.modifyMemberRoles(member, Collections.singleton(vagabondRole), Arrays.asList(guildOwnerRole, guildAdministratorRole)).complete();
+                controller.modifyMemberRoles(member, Collections.singleton(vagabondRole), Arrays.asList(guildOwnerRole, guildAdministratorRole)).queue();
             }
         });
     }
