@@ -83,7 +83,7 @@ public class SetupListener extends ListenerAdapter {
         if (!event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())) return;
         if (event.getMessage().getContentRaw().replace(event.getJDA().getSelfUser().getAsMention(), "").trim().equalsIgnoreCase("autosetup")) {
             Category category = (Category) event.getGuild().getController().createCategory("support").complete();
-            TextChannel channel = (TextChannel) category.createTextChannel("support").complete();
+            TextChannel channel = (TextChannel) category.createTextChannel("support").setSlowmode(60).complete();
             TextChannel logChannel = (TextChannel) category.createTextChannel("transcripts").complete();
             Helpdesk helpdesk = new Helpdesk(category, channel);
             helpdesk.getConfig().setTicketMasterRole(event.getGuild().getRoles().stream().filter(role -> !role.isManaged() && !role.isPublicRole()).findFirst().orElse(null));
@@ -129,6 +129,7 @@ public class SetupListener extends ListenerAdapter {
         SupportBot.get().getHelpdesks().add(helpdesk);
         event.getMessage().delete().queue();
 
+        event.getChannel().getManager().setSlowmode(60).queue();
         event.getChannel().sendMessage(new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle("Helpdesk successfully created")
