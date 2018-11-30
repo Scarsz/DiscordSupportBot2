@@ -11,6 +11,7 @@ import github.scarsz.discordsupportbot.util.TimeUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
@@ -115,7 +116,7 @@ public class Ticket extends ListenerAdapter {
                 }
             }
 
-            System.out.println("Collected " + tickets.size() + " tickets for " + helpdesk);
+            if (tickets.size() > 0) System.out.println("Collected " + tickets.size() + " tickets for " + helpdesk);
             return tickets;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -136,11 +137,14 @@ public class Ticket extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
+        if (!event.getChannel().equals(getChannel())) return;
+        System.out.println("??????????");
         if (event.getUser().equals(event.getJDA().getSelfUser())) return;
         if (event.getUser().isBot()) return;
-        if (!event.getChannel().equals(getChannel())) return;
         if (getStartingMessage() == null) return;
         if (!event.getMessageId().equals(getStartingMessage().getId())) return;
+
+        System.out.println(this + " received " + event.getReactionEmote().getName() + " from " + event.getMember().getEffectiveName());
 
         event.getReaction().removeReaction(event.getUser()).queue();
 
@@ -325,7 +329,7 @@ public class Ticket extends ListenerAdapter {
     }
 
     private void setStatus(Status status, Member cause) {
-        setStatus(status, cause, false);
+        setStatus(status, cause, true);
     }
 
     private void setStatus(Status status, Member cause, boolean queue) {
@@ -476,7 +480,7 @@ public class Ticket extends ListenerAdapter {
 
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
-        if (getStartingMessage() != null && event.getMessageId().equals(getStartingMessage().getId())) {
+        if (event.getChannel().getId().equals(channelId) && getStartingMessage() != null && event.getMessageId().equals(getStartingMessage().getId())) {
             destroy();
         }
     }
@@ -503,9 +507,19 @@ public class Ticket extends ListenerAdapter {
             destroy();
             return null;
         }
+        if (SupportBot.get().getJda().getStatus() != JDA.Status.CONNECTED) return null;
         if (startingMessageId != null && getChannel().getMessageById(startingMessageId).complete() != null) return getChannel().getMessageById(startingMessageId).complete();
         MessageHistory history = getChannel().getHistory();
-        while (true) if (history.retrievePast(100).complete().size() == 0) break;
+        System.out.print("Retrieving messages");
+        int count = 0;
+        do {
+            count++;
+            System.out.print(".");
+            if (history.retrievePast(100).complete().size() == 0) {
+                System.out.println(" done");
+                break;
+            }
+        } while (count < 10);
         List<Message> retrievedHistory = new LinkedList<>(history.getRetrievedHistory());
         Collections.reverse(retrievedHistory);
         Message msg = retrievedHistory.stream()
@@ -530,6 +544,17 @@ public class Ticket extends ListenerAdapter {
 
     public TextChannel getChannel() {
         return SupportBot.get().getJda().getTextChannelById(channelId);
+    }
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "channelId='" + channelId + '\'' +
+                ", helpdesk=" + helpdesk +
+                ", number=" + number +
+                ", uuid=" + uuid +
+                ", status=" + status +
+                '}';
     }
 
 }
