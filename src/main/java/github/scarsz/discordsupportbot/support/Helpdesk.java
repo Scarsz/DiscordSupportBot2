@@ -53,7 +53,6 @@ public class Helpdesk extends ListenerAdapter {
             System.out.println("Instantiating helpdesk from database: " + uuid);
         }
 
-        System.out.print("Querying helpdesk info");
         PreparedStatement statement = SupportBot.get().getDatabase().prepareStatement("SELECT * FROM `helpdesks` WHERE `uuid` = ?");
         statement.setString(1, uuid.toString());
         ResultSet result = statement.executeQuery();
@@ -70,6 +69,7 @@ public class Helpdesk extends ListenerAdapter {
         tickets = Ticket.collect(this);
 
         SupportBot.get().getJda().addEventListener(this);
+        System.out.println();
     }
 
     /**

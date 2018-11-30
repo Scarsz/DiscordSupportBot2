@@ -60,7 +60,7 @@ public abstract class Prompt {
                 prompts.add(prompt);
             }
 
-            System.out.println("Collected " + prompts.size() + " prompts for " + helpdesk);
+            if (prompts.size() > 0) System.out.println("Collected " + prompts.size() + " prompts for " + helpdesk);
             return prompts;
         } catch (SQLException | ParseException e) {
             e.printStackTrace();
