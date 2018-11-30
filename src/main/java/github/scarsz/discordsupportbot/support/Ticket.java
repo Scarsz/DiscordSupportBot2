@@ -138,7 +138,6 @@ public class Ticket extends ListenerAdapter {
     @Override
     public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
         if (!event.getChannel().equals(getChannel())) return;
-        System.out.println("??????????");
         if (event.getUser().equals(event.getJDA().getSelfUser())) return;
         if (event.getUser().isBot()) return;
         if (getStartingMessage() == null) return;
