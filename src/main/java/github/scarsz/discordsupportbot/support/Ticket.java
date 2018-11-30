@@ -405,10 +405,15 @@ public class Ticket extends ListenerAdapter {
                         .setFooter(cause != null ? FooterUtil.make(cause) : null, cause != null ? cause.getUser().getEffectiveAvatarUrl() : null)
                         .build()
                 ).queue(message -> {
-                    message.delete().queueAfter(15, TimeUnit.SECONDS, v -> {
-//                        sendTranscripts();
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(15 * 1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        sendTranscripts();
                         destroy();
-                    });
+                    }).start();
                 });
                 break;
             case ABANDONED:
