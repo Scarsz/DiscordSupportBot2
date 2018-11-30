@@ -78,14 +78,13 @@ public class SupportBot {
                 .setBulkDeleteSplittingEnabled(false)
                 .setToken(botToken)
 //                .setGame(Game.playing("support.scarsz.me"))
-                .setGame(Game.playing("under development, frequently restarting"))
                 .addEventListener(waiter)
                 .addEventListener(configListener = new ConfigListener())
                 .build().awaitStatus(JDA.Status.CONNECTED);
-        new StatusCycler(
+        new StatusCycler(Arrays.asList(
                 () -> Game.playing("support.scarsz.me"),
                 () -> Game.playing("under development, frequently restarting")
-        ).start();
+        )).start();
         jda.addEventListener(new SetupListener());
         jda.addEventListener(new AdminCommandListener());
         jda.addEventListener(new DevelopmentCommandListener());

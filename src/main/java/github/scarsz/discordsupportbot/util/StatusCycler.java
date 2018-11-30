@@ -5,7 +5,6 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.managers.Presence;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -17,8 +16,8 @@ public class StatusCycler extends Thread {
 
     private int index = 0;
 
-    public StatusCycler(Callable<Game>... statuses) {
-        Collections.addAll(this.statuses, statuses);
+    public StatusCycler(List<Callable<Game>> statuses) {
+        this.statuses.addAll(statuses);
     }
 
     @Override
@@ -26,7 +25,7 @@ public class StatusCycler extends Thread {
         while (true) {
             try {
                 if (SupportBot.get().getJda().getStatus() != JDA.Status.CONNECTED) break;
-                if (presence.getGame().getName().equals(statuses.get(index).call().getName())) break;
+                if (presence.getGame() != null && presence.getGame().getName().equals(statuses.get(index).call().getName())) break;
 
                 Game newGame = statuses.get(index).call();
                 presence.setGame(newGame);
