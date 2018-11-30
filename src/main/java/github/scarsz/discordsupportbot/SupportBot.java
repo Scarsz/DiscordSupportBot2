@@ -20,11 +20,13 @@ import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
+import net.dv8tion.jda.core.managers.GuildController;
 import net.dv8tion.jda.core.requests.RestAction;
 
 import java.io.File;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class SupportBot {
@@ -146,6 +148,41 @@ public class SupportBot {
 //        jda.getGuilds().stream().map(guild -> guild.getMembers().size() + " " + guild.getName() + " " + guild.getId()).sorted().forEach(System.out::println);
 
         this.httpServer = new HttpServer();
+
+        new Thread(() -> {
+            refreshRoles();
+            try {
+                Thread.sleep(TimeUnit.SECONDS.toMillis(60));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private void refreshRoles() {
+        Guild masterServer = jda.getGuildById("382266272450215937");
+        Role guildOwnerRole = masterServer.getRolesByName("Guild owner", true).get(0);
+        Role guildAdministratorRole = masterServer.getRolesByName("Guild administrator", true).get(0);
+        Role vagabondRole = masterServer.getRolesByName("Vagabond", true).get(0);
+        Set<User> owners = new HashSet<>();
+        Set<User> admins = new HashSet<>();
+        jda.getGuilds().stream().map(Guild::getOwner).map(Member::getUser).forEach(owners::add);
+        jda.getGuilds().stream().map(Guild::getMembers).forEach(members -> members.stream()
+                .filter(member -> member.hasPermission(Permission.ADMINISTRATOR))
+                .forEach(member -> admins.add(member.getUser()))
+        );
+        admins.removeAll(owners);
+
+        GuildController controller = masterServer.getController();
+        masterServer.getMembers().stream().filter(member -> !member.isOwner() && !member.getUser().isBot()).forEach(member -> {
+            if (owners.contains(member.getUser())) {
+                controller.modifyMemberRoles(member, Collections.singleton(guildOwnerRole), Arrays.asList(guildAdministratorRole, vagabondRole)).queue();
+            } else if (admins.contains(member.getUser())) {
+                controller.modifyMemberRoles(member, Collections.singleton(guildAdministratorRole), Arrays.asList(guildOwnerRole, vagabondRole)).complete();
+            } else {
+                controller.modifyMemberRoles(member, Collections.singleton(vagabondRole), Arrays.asList(guildOwnerRole, guildAdministratorRole)).complete();
+            }
+        });
     }
 
     private void flush() {
