@@ -12,6 +12,7 @@ import github.scarsz.discordsupportbot.http.HttpServer;
 import github.scarsz.discordsupportbot.support.Helpdesk;
 import github.scarsz.discordsupportbot.support.Ticket;
 import github.scarsz.discordsupportbot.support.TicketVoiceChannel;
+import github.scarsz.discordsupportbot.util.StatusCycler;
 import lombok.Getter;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -79,6 +80,10 @@ public class SupportBot {
                 .addEventListener(waiter)
                 .addEventListener(configListener = new ConfigListener())
                 .build().awaitStatus(JDA.Status.CONNECTED);
+        new StatusCycler(
+                () -> Game.playing("support.scarsz.me"),
+                () -> Game.playing("under development, frequently restarting")
+        ).start();
         jda.addEventListener(new SetupListener());
         jda.addEventListener(new AdminCommandListener());
         jda.addEventListener(new DevelopmentCommandListener());
