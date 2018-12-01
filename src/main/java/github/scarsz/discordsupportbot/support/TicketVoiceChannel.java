@@ -78,12 +78,14 @@ public class TicketVoiceChannel extends ListenerAdapter {
         if (getChannel().getMembers().size() == 0) {
             getChannel().delete().queue(v -> {
                 ticket.setVoiceChannel(null);
-                ticket.getChannel().sendMessage(new EmbedBuilder()
-                        .setColor(Color.RED)
-                        .setTitle("Voice channel expired")
-                        .setDescription("Everyone left the channel.")
-                        .build()
-                ).queue(message -> message.delete().queueAfter(15, TimeUnit.SECONDS));
+                if (ticket.getChannel() != null) {
+                    ticket.getChannel().sendMessage(new EmbedBuilder()
+                            .setColor(Color.RED)
+                            .setTitle("Voice channel expired")
+                            .setDescription("Everyone left the channel.")
+                            .build()
+                    ).queue(message -> message.delete().queueAfter(15, TimeUnit.SECONDS));
+                }
             });
         }
     }
