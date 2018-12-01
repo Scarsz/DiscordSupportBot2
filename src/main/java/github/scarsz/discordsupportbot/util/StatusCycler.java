@@ -24,7 +24,9 @@ public class StatusCycler extends Thread {
     public void run() {
         while (true) {
             try {
-                if (SupportBot.get().getJda().getStatus() != JDA.Status.CONNECTED) break;
+                Thread.sleep(5000);
+
+                if (SupportBot.get().getJda().getStatus() != JDA.Status.CONNECTED) continue;
                 if (presence.getGame() != null && presence.getGame().getName().equals(statuses.get(index).call().getName())) break;
 
                 Game newGame = statuses.get(index).call();
@@ -32,8 +34,6 @@ public class StatusCycler extends Thread {
 
                 index++;
                 if (index == statuses.size()) index = 0;
-
-                Thread.sleep(5000);
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
