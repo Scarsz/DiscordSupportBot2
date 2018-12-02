@@ -21,7 +21,7 @@ public class AdminCommandListener extends ListenerAdapter {
         if (commandRaw.length < 2) return;
         String command = commandRaw[0];
         List<String> args = Arrays.stream(commandRaw).skip(1).collect(Collectors.toList());
-        Arrays.stream(getClass().getMethods())
+        Arrays.stream(getClass().getDeclaredMethods())
                 .filter(method -> method.getName().equalsIgnoreCase(command))
                 .findFirst().ifPresent(method -> {
             try {
