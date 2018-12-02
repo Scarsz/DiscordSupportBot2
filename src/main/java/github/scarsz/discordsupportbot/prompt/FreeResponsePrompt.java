@@ -51,9 +51,22 @@ public class FreeResponsePrompt extends Prompt {
                 event -> {
                     boolean correctChannel = event.getChannel().equals(ticket.getChannel());
                     boolean correctAuthor = event.getAuthor().equals(ticket.getAuthor());
-                    return correctChannel && correctAuthor;
+                    boolean acceptableLength = event.getMessage().getContentRaw().length() <= 1024;
+                    if (!acceptableLength) {
+                        ticket.getChannel().sendMessage(new EmbedBuilder()
+                                .setColor(Color.YELLOW)
+                                .setTitle("Response too long")
+                                .setDescription("The maximum length of responses is 1024 characters- your response has been truncated.")
+                                .build()
+                        ).complete().delete().queueAfter(10, TimeUnit.SECONDS);
+                    }
+                    return correctChannel && correctAuthor && acceptableLength;
                 },
-                event -> ticket.answer(answerIndex, event.getMessage().getContentRaw()),
+                event -> ticket.answer(answerIndex,
+                        event.getMessage().getContentRaw().length() >= 1024 - 3
+                                ? event.getMessage().getContentRaw().substring(0, 1024 - 3) + "..."
+                                : event.getMessage().getContentRaw()
+                ),
                 5, TimeUnit.MINUTES,
                 ticket::destroy
         );
