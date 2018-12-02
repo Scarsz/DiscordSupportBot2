@@ -24,7 +24,7 @@ public class StatusCycler extends Thread {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(15 * 1000);
 
                 if (SupportBot.get().getJda().getStatus() != JDA.Status.CONNECTED) continue;
                 if (presence.getGame() != null && presence.getGame().getName().equals(statuses.get(index).call().getName())) break;
