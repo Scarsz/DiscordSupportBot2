@@ -16,7 +16,7 @@ public class AdminCommandListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        if (event.getAuthor() == null || event.getAuthor().getId() == null || event.getMessage() == null) return;
+        if (event.getAuthor() == null || event.getAuthor().getId() == null || event.getMessage() == null || event.getMember() == null) return;
         String[] commandRaw = event.getMessage().getContentRaw().replace(SupportBot.get().getJda().getSelfUser().getAsMention(), "").trim().split(" ");
         if (commandRaw.length < 2) return;
         String command = commandRaw[0];
