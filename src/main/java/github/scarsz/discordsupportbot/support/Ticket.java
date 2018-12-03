@@ -339,6 +339,10 @@ public class Ticket extends ListenerAdapter {
 //                .skip(1)
 //                .collect(Collectors.joining("\n"))
 //        );
+        if (getChannel() == null) {
+            destroy();
+            return;
+        }
         flush();
         ChannelManager setTopic = getChannel().getManager().setTopic("Status: " + status.toString() + " | Ticket author: <@" + getAuthorId() + ">");
         if (queue) setTopic.queue(); else setTopic.complete();
