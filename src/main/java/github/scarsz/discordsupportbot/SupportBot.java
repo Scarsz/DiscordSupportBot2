@@ -83,6 +83,7 @@ public class SupportBot {
                 .build().awaitStatus(JDA.Status.CONNECTED);
         new StatusCycler(Arrays.asList(
                 () -> Game.playing("support.scarsz.me"),
+                () -> Game.playing("website temporarily offline"),
                 () -> Game.playing("under development, frequently restarting")
         )).start();
         jda.addEventListener(new SetupListener());
@@ -187,7 +188,7 @@ public class SupportBot {
     private void flush() {
         try {
             System.out.print("Saving " + helpdesks.size() + " helpdesks");
-            helpdesks.forEach(helpdesk -> {
+            getHelpdesks().forEach(helpdesk -> {
                 helpdesk.flush();
                 System.out.print(".");
             });
@@ -205,7 +206,7 @@ public class SupportBot {
         flush();
 
         // kill voice channels
-        for (Helpdesk helpdesk : helpdesks) {
+        for (Helpdesk helpdesk : getHelpdesks()) {
             for (Ticket ticket : helpdesk.getTickets()) {
                 TicketVoiceChannel voiceChannel = ticket.getVoiceChannel();
                 if (voiceChannel != null) {
@@ -235,13 +236,17 @@ public class SupportBot {
         Runtime.getRuntime().halt(0);
     }
 
+    public Set<Helpdesk> getHelpdesks() {
+        helpdesks.remove(null);
+        return helpdesks;
+    }
     public Helpdesk getHelpdesk(UUID uuid) {
-        return helpdesks.stream()
+        return getHelpdesks().stream()
                 .filter(helpdesk -> helpdesk.getUuid().equals(uuid))
                 .findFirst().orElse(null);
     }
     public Helpdesk getHelpdeskForCategory(String categoryId) {
-        return helpdesks.stream()
+        return getHelpdesks().stream()
                 .filter(helpdesk -> helpdesk.getCategory().getId().equals(categoryId))
                 .findFirst().orElse(null);
     }
@@ -249,7 +254,7 @@ public class SupportBot {
         return getHelpdeskForCategory(category.getId());
     }
     public Helpdesk getHelpdeskForTicket(UUID uuid) {
-        return helpdesks.stream()
+        return getHelpdesks().stream()
                 .filter(helpdesk -> helpdesk.getTickets().stream().anyMatch(ticket -> ticket.getUuid().equals(uuid)))
                 .findFirst().orElse(null);
     }
@@ -261,7 +266,7 @@ public class SupportBot {
     }
     public Set<Helpdesk> getHelpdesksForGuild(Guild guild) {
         if (guild == null) return Collections.emptySet();
-        return helpdesks.stream()
+        return getHelpdesks().stream()
                 .filter(helpdesk -> helpdesk.getStartingChannel() != null)
                 .filter(helpdesk -> helpdesk.getStartingChannel().getGuild().equals(guild))
                 .collect(Collectors.toSet());
