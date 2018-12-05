@@ -55,7 +55,13 @@ public class Ticket extends ListenerAdapter {
         this.uuid = uuid;
         this.number = number;
         this.authorId = authorId;
-        this.initialMessage = initialMessage;
+        this.initialMessage = initialMessage != null
+                ? initialMessage
+                : getStartingMessage() != null
+                    ? getStartingMessage().getEmbeds().size() > 0
+                        ? getStartingMessage().getEmbeds().get(0).getDescription()
+                        : "[Initial message unavailable]"
+                    : "[Initial message unavailable]";
         setStatus(status, true);
 
         // add to database
@@ -108,7 +114,7 @@ public class Ticket extends ListenerAdapter {
                 System.out.print(".");
 
                 try {
-                    tickets.add(new Ticket(helpdesk, channel, uuid, number, author, "[Initial message unavailable]", status));
+                    tickets.add(new Ticket(helpdesk, channel, uuid, number, author, null, status));
                     System.out.println(" done");
                 } catch (DataInvalidException e) {
                     System.out.println();
