@@ -40,9 +40,9 @@ public class Ticket extends ListenerAdapter {
     @Getter private final String channelId;
     @Getter private final Helpdesk helpdesk;
     @Getter private final int number;
-    @Getter private final String initialMessage;
     @Getter private final UUID uuid;
 
+    @Getter private String initialMessage;
     @Getter private Status status;
     private String startingMessageId = null;
     @Getter @Setter private TicketVoiceChannel voiceChannel = null;
@@ -55,13 +55,25 @@ public class Ticket extends ListenerAdapter {
         this.uuid = uuid;
         this.number = number;
         this.authorId = authorId;
-        this.initialMessage = initialMessage != null
-                ? initialMessage
-                : getStartingMessage() != null
-                    ? getStartingMessage().getEmbeds().size() > 0
-                        ? getStartingMessage().getEmbeds().get(0).getDescription()
-                        : "[Initial message unavailable]"
-                    : "[Initial message unavailable]";
+//        this.initialMessage = initialMessage != null
+//                ? initialMessage
+//                : getStartingMessage() != null
+//                    ? getStartingMessage().getEmbeds().size() > 0
+//                        ? getStartingMessage().getEmbeds().get(0).getDescription()
+//                        : "[Initial message unavailable]"
+//                    : "[Initial message unavailable]";
+        this.initialMessage = initialMessage;
+        if (initialMessage == null) {
+            new Thread(() -> {
+                Message retrieved = getStartingMessage();
+                if (retrieved != null && retrieved.getEmbeds().size() > 0) {
+                    MessageEmbed embed = retrieved.getEmbeds().get(0);
+                    if (embed.getDescription() != null) {
+                        this.initialMessage = embed.getDescription();
+                    }
+                }
+            }).start();
+        }
         setStatus(status, true);
 
         // add to database
