@@ -526,7 +526,12 @@ public class Ticket extends ListenerAdapter {
     }
 
     public User getAuthor() {
-        return getChannel().getJDA().getUserById(authorId);
+        if (getChannel() == null) {
+            destroy();
+            return null;
+        } else {
+            return getChannel().getJDA().getUserById(authorId);
+        }
     }
 
     public Member getMember() {
