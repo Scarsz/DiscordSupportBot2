@@ -2,6 +2,7 @@ package github.scarsz.discordsupportbot.transcript;
 
 import github.scarsz.discordsupportbot.SupportBot;
 import github.scarsz.discordsupportbot.support.Ticket;
+import net.dv8tion.jda.core.entities.ISnowflake;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.entities.User;
@@ -16,9 +17,9 @@ import java.util.*;
 public class Transcript {
 
     private final UUID uuid;
-    private final Set<User> usersToNotify = new HashSet<>();
+    private final Set<String> usersToNotify = new HashSet<>();
 
-    public Transcript(UUID uuid, List<String> lines, Expiration expiration, Set<User> usersToNotify) {
+    public Transcript(UUID uuid, List<String> lines, Expiration expiration, Set<String> usersToNotify) {
         this.uuid = uuid;
         this.usersToNotify.addAll(usersToNotify);
 
@@ -45,16 +46,16 @@ public class Transcript {
         }
         if (lines.size() == 0) return null;
 
-        Set<User> usersToNotify = new HashSet<>();
-        if (ticket.getAuthor() != null) usersToNotify.add(ticket.getAuthor());
-        history.getRetrievedHistory().stream().filter(Objects::nonNull).map(Message::getAuthor).forEach(usersToNotify::add);
+        Set<String> usersToNotify = new HashSet<>();
+        if (ticket.getAuthor() != null) usersToNotify.add(ticket.getAuthor().getId());
+        history.getRetrievedHistory().stream().filter(Objects::nonNull).map(Message::getAuthor).map(ISnowflake::getId).forEach(usersToNotify::add);
         try {
             PreparedStatement statement = SupportBot.get().getDatabase().prepareStatement("SELECT * FROM `transcript_requests` WHERE `ticket` = ?");
             statement.setString(1, ticket.getUuid().toString());
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 User user = SupportBot.get().getJda().getUserById(result.getString("user"));
-                if (user != null) usersToNotify.add(user);
+                if (user != null) usersToNotify.add(user.getId());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -94,7 +95,7 @@ public class Transcript {
         return uuid;
     }
 
-    public Set<User> getUsersToNotify() {
+    public Set<String> getUsersToNotify() {
         return usersToNotify;
     }
 

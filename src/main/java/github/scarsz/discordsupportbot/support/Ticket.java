@@ -41,6 +41,15 @@ public class Ticket extends ListenerAdapter {
     @Getter private final Helpdesk helpdesk;
     @Getter private final int number;
     @Getter private final UUID uuid;
+    @Getter private final Thread transcriptThread = new Thread(() -> {
+        try {
+            Thread.sleep(15 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        sendTranscripts();
+        destroy();
+    });
 
     @Getter private String initialMessage;
     @Getter private Status status;
@@ -421,22 +430,14 @@ public class Ticket extends ListenerAdapter {
                 break;
             case SOLVED:
                 if (sameState) break;
+                if (transcriptThread.getState() != Thread.State.NEW) break;
+                transcriptThread.start();
                 getChannel().sendMessage(new EmbedBuilder()
                         .setColor(Color.GREEN)
                         .setTitle("Ticket has been marked as solved!")
                         .setFooter(cause != null ? FooterUtil.make(cause) : null, cause != null ? cause.getUser().getEffectiveAvatarUrl() : null)
                         .build()
-                ).queue(message -> {
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(15 * 1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        sendTranscripts();
-                        destroy();
-                    }).start();
-                });
+                ).queue();
                 break;
             case ABANDONED:
                 getChannel().sendMessage(new EmbedBuilder().setColor(Color.DARK_GRAY).setTitle("The ticket author has left.").build()).queue();
@@ -474,8 +475,9 @@ public class Ticket extends ListenerAdapter {
                 .setDescription(transcript.getUrl())
                 .build();
 
-        for (User user : transcript.getUsersToNotify()) {
-            if (user.isBot() || user.isFake() || user.equals(SupportBot.get().getJda().getSelfUser())) continue;
+        for (String userId : transcript.getUsersToNotify()) {
+            User user = SupportBot.get().getJda().getUserById(userId);
+            if (user == null || user.isBot() || user.isFake() || user.equals(SupportBot.get().getJda().getSelfUser())) continue;
             user.openPrivateChannel().queue(dm -> dm.sendMessage(embed).queue());
         }
 
