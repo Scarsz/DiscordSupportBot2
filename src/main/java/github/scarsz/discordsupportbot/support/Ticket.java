@@ -319,6 +319,8 @@ public class Ticket extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+        if (status == Status.GATHERING_INFO) return;
+
         if (!event.getChannel().equals(getChannel()) || event.getAuthor() == null || event.getJDA().getSelfUser().equals(event.getAuthor())) return;
         Role ticketMasterRole = helpdesk.getConfig().getTicketMasterRole();
         if (event.getAuthor().isBot() && !event.getAuthor().equals(event.getJDA().getSelfUser())) {
