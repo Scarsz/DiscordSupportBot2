@@ -49,10 +49,11 @@ public class FreeResponsePrompt extends Prompt {
         SupportBot.get().getWaiter().waitForEvent(
                 GuildMessageReceivedEvent.class,
                 event -> {
-                    boolean correctChannel = event.getChannel().equals(ticket.getChannel());
-                    boolean correctAuthor = event.getAuthor().equals(ticket.getAuthor());
-                    boolean acceptableLength = event.getMessage().getContentRaw().length() <= 1024;
-                    if (!acceptableLength) {
+                    if (event.getAuthor() == null || event.getAuthor().isBot() || event.getAuthor().isFake()) return false;
+                    if (event.getMessage().getEmbeds().size() > 0) return false;
+                    if (!event.getChannel().equals(ticket.getChannel())) return false;
+                    if (!event.getAuthor().equals(ticket.getAuthor())) return false;
+                    if (event.getMessage().getContentRaw().length() > 1024) {
                         ticket.getChannel().sendMessage(new EmbedBuilder()
                                 .setColor(Color.YELLOW)
                                 .setTitle("Response too long")
@@ -60,7 +61,7 @@ public class FreeResponsePrompt extends Prompt {
                                 .build()
                         ).complete().delete().queueAfter(10, TimeUnit.SECONDS);
                     }
-                    return correctChannel && correctAuthor && acceptableLength;
+                    return true;
                 },
                 event -> ticket.answer(answerIndex,
                         event.getMessage().getContentRaw().length() >= 1024 - 3
