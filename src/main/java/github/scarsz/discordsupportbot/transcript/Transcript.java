@@ -48,7 +48,12 @@ public class Transcript {
 
         Set<String> usersToNotify = new HashSet<>();
         if (ticket.getAuthor() != null) usersToNotify.add(ticket.getAuthor().getId());
-        history.getRetrievedHistory().stream().filter(Objects::nonNull).map(Message::getAuthor).map(ISnowflake::getId).forEach(usersToNotify::add);
+        history.getRetrievedHistory().stream()
+                .filter(Objects::nonNull)
+                .map(Message::getAuthor)
+                .map(ISnowflake::getId)
+                .filter(s -> !usersToNotify.contains(s))
+                .forEach(usersToNotify::add);
         try {
             PreparedStatement statement = SupportBot.get().getDatabase().prepareStatement("SELECT * FROM `transcript_requests` WHERE `ticket` = ?");
             statement.setString(1, ticket.getUuid().toString());
