@@ -158,7 +158,17 @@ public class ConfigurationMessage extends ListenerAdapter {
                         .setFooter(FooterUtil.make(member), member.getUser().getEffectiveAvatarUrl())
                         .build()
                 ).queue();
-                List<String> allEmojis = Arrays.asList(Emoji.HEAVY_PLUS_SIGN, Emoji.HEAVY_MINUS_SIGN, Emoji.BABY, Emoji.SCROLL, Emoji.FILE_FOLDER, Emoji.NERD, Emoji.X, Emoji.BACK, Emoji.WHITE_CHECK_MARK);
+                List<String> allEmojis = Arrays.asList(
+                        Emoji.HEAVY_PLUS_SIGN,
+                        Emoji.HEAVY_MINUS_SIGN,
+                        Emoji.BABY,
+                        Emoji.SCROLL,
+                        Emoji.FILE_FOLDER,
+                        Emoji.NERD,
+                        Emoji.X,
+                        Emoji.BACK,
+                        Emoji.WHITE_CHECK_MARK
+                );
                 for (String emoji : allEmojis) {
                     message.addReaction(emoji).queue();
                 }

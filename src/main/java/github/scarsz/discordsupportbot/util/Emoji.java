@@ -491,7 +491,7 @@ public class Emoji {
     public static final String NAME_BADGE = "\uD83D\uDCDB";
     public static final String NECKTIE = "\uD83D\uDC54";
     public static final String NEGATIVE_SQUARED_CROSS_MARK = "\u274E";
-    public static final String NERD = "";
+    public static final String NERD = "\uD83E\uDD13";
     public static final String NEUTRAL_FACE = "\uD83D\uDE10";
     public static final String NEW = "\uD83C\uDD95";
     public static final String NEW_MOON = "\uD83C\uDF11";
