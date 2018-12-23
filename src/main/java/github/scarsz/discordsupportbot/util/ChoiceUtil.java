@@ -78,6 +78,17 @@ public class ChoiceUtil {
             case Emoji.REGIONAL_INDICATOR_X: return 24;
             case Emoji.REGIONAL_INDICATOR_Y: return 25;
             case Emoji.REGIONAL_INDICATOR_Z: return 26;
+//            case Emoji.ZERO: return 0;
+            case Emoji.ONE: return 1;
+            case Emoji.TWO: return 2;
+            case Emoji.THREE: return 3;
+            case Emoji.FOUR: return 4;
+            case Emoji.FIVE: return 5;
+            case Emoji.SIX: return 6;
+            case Emoji.SEVEN: return 7;
+            case Emoji.EIGHT: return 8;
+            case Emoji.NINE: return 9;
+            case Emoji.TEN: return 10;
             default: return 0;
         }
     }
