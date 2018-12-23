@@ -251,6 +251,7 @@ public class SupportBot {
                 .findFirst().orElse(null);
     }
     public Helpdesk getHelpdeskForCategory(Category category) {
+        if (category == null) return null;
         return getHelpdeskForCategory(category.getId());
     }
     public Helpdesk getHelpdeskForTicket(UUID uuid) {
