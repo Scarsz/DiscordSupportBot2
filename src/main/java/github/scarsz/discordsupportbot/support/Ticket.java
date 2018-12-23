@@ -554,11 +554,7 @@ public class Ticket extends ListenerAdapter {
         int count = 0;
         do {
             count++;
-            System.out.print(".");
-            if (history.retrievePast(100).complete().size() == 0) {
-                System.out.println(" done");
-                break;
-            }
+            if (history.retrievePast(100).complete().size() == 0) break;
         } while (count < 10);
         List<Message> retrievedHistory = new LinkedList<>(history.getRetrievedHistory());
         Collections.reverse(retrievedHistory);
