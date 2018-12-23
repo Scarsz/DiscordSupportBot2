@@ -74,7 +74,7 @@ public class ConfigurationMessage extends ListenerAdapter {
 //            });
 //        }
         try {
-            message.clearReactions().complete();
+            message.clearReactions().queue();
         } catch (ErrorResponseException e) {
             dead = true;
         }
