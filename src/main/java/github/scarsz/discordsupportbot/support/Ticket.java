@@ -524,7 +524,7 @@ public class Ticket extends ListenerAdapter {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         if (helpdesk.getConfig().shouldMarkAsSolvedOnAbandon()) {
             helpdesk.getTickets().stream()
-                    .filter(ticket -> ticket.authorId.equals(event.getUser().getId()))
+                    .filter(ticket -> event.getUser() == null || ticket.authorId.equals(event.getUser().getId()))
                     .forEach(ticket -> ticket.setStatus(Status.ABANDONED));
         }
     }
