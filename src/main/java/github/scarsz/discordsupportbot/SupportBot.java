@@ -41,8 +41,8 @@ public class SupportBot {
 
     private static SupportBot SUPPORT_BOT;
 
+    private final Set<Helpdesk> helpdesks = new HashSet<>();
     @Getter private final Connection database;
-    @Getter private final Set<Helpdesk> helpdesks = new HashSet<>();
     @Getter private final JDA jda;
     @Getter private final HttpServer httpServer;
     @Getter private final EventWaiter waiter = new EventWaiter();
@@ -82,9 +82,9 @@ public class SupportBot {
                 .addEventListener(configListener = new ConfigListener())
                 .build().awaitStatus(JDA.Status.CONNECTED);
         new StatusCycler(Arrays.asList(
-                () -> Game.playing("support.scarsz.me"),
-                () -> Game.playing("website temporarily offline"),
-                () -> Game.playing("under development, frequently restarting")
+                () -> Game.playing("support.scarsz.me")
+//                () -> Game.playing("website temporarily offline"),
+//                () -> Game.playing("under development, frequently restarting")
         )).start();
         jda.addEventListener(new SetupListener());
         jda.addEventListener(new AdminCommandListener());
