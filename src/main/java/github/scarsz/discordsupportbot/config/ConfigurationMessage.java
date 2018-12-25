@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("Duplicates")
 public class ConfigurationMessage extends ListenerAdapter {
 
     @Getter private final ConfigListener listener;
@@ -217,7 +218,14 @@ public class ConfigurationMessage extends ListenerAdapter {
                 ).queue(message -> {
                     SupportBot.get().getWaiter().waitForEvent(
                             GuildMessageReceivedEvent.class,
-                            event -> event.getMember() != null && event.getMember().equals(member) && event.getChannel().equals(message.getTextChannel()),
+                            event -> {
+//                                event.getMember() != null && event.getMember().equals(member) && event.getChannel().equals(message.getTextChannel())
+                                if (event.getAuthor() == null || event.getMember() == null || event.getAuthor().isBot() || event.getAuthor().isFake()) return false;
+                                if (!event.getMember().equals(member)) return false;
+                                if (!event.getChannel().equals(message.getTextChannel())) return false;
+                                if (event.getMessage().getEmbeds().size() > 0) return false;
+                                return true;
+                            },
                             event -> {
                                 String promptTitleTemp = event.getMessage().getContentRaw();
                                 promptTitleTemp = promptTitleTemp.substring(0, 1).toUpperCase() + promptTitleTemp.substring(1);
