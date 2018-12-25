@@ -1,19 +1,33 @@
 package github.scarsz.discordsupportbot.util;
 
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Channel;
 import net.dv8tion.jda.core.entities.PermissionOverride;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
 public class PermissionUtil {
 
     public static void clearPermissions(Channel channel) {
-        channel.getPermissionOverrides().forEach(override -> override.delete().complete());
+        channel.getPermissionOverrides().forEach(override -> {
+            try {
+                override.delete().complete();
+            } catch (InsufficientPermissionException e) {
+                channel.getGuild().getOwner().getUser().openPrivateChannel().queue(privateChannel -> privateChannel.sendMessage(new EmbedBuilder()
+                        .setColor(Color.RED)
+                        .setTitle("Permission exception occurred in your guild " + channel.getGuild().getName())
+                        .setDescription(e.getMessage())
+                        .build()
+                ).queue());
+            }
+        });
     }
 
     public static void copyPermissions(TextChannel source, TextChannel destination) {
