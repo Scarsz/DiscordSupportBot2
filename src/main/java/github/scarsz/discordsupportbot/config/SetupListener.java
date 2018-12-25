@@ -114,6 +114,15 @@ public class SetupListener extends ListenerAdapter {
             });
         }
         if (!event.getMessage().getContentRaw().replace(event.getJDA().getSelfUser().getAsMention(), "").trim().equalsIgnoreCase("setup")) return;
+        if (event.getChannel().getParent() == null) {
+            event.getChannel().sendMessage(new EmbedBuilder()
+                    .setColor(Color.RED)
+                    .setTitle("Support channel must be inside of a category")
+                    .setDescription("The starting channel for support tickets must be placed inside of a category. Try `/support autosetup`.")
+                    .build()
+            ).queue(message -> message.delete().queueAfter(15, TimeUnit.SECONDS));
+            return;
+        }
         if (SupportBot.get().getHelpdeskForCategory(event.getChannel().getParent()) != null) {
             event.getChannel().sendMessage(new EmbedBuilder()
                     .setColor(Color.RED)
