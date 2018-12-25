@@ -420,11 +420,17 @@ public class ConfigurationMessage extends ListenerAdapter {
                 });
                 break;
             case SET_TICKET_MASTER:
+                String roles = guild.getRoles().stream()
+                        .filter(role -> !role.isManaged() && !role.isPublicRole())
+                        .map(Role::getName)
+                        .collect(Collectors.joining("`, `", "`", "`"));
+                if (roles.length() >= 1024) roles = roles.substring(0, 1021) + "...";
+
                 message.editMessage(new EmbedBuilder()
                         .setColor(Color.YELLOW)
                         .setTitle("Specify which role should be able to provide support (currently `" + (selection.getConfig().getTicketMasterRole() != null ? selection.getConfig().getTicketMasterRole().getName() : "none") + "`)")
                         .setDescription("If you do not wish to change the ticket master role, respond with a message containing no role names.")
-                        .addField("Available roles", guild.getRoles().stream().filter(role -> !role.isManaged() && !role.isPublicRole()).map(Role::getName).collect(Collectors.joining("`, `", "`", "`")), false)
+                        .addField("Available roles", roles, false)
                         .setFooter(FooterUtil.make(member), member.getUser().getEffectiveAvatarUrl())
                         .build()
                 ).queue(msg -> {
