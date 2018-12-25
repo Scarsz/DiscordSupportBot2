@@ -232,13 +232,18 @@ public class ConfigurationMessage extends ListenerAdapter {
                                     SupportBot.get().getWaiter().waitForEvent(
                                             GuildMessageReceivedEvent.class,
                                             event2 -> {
+                                                if (event2.getAuthor() == null || event2.getMember() == null || event2.getAuthor().isBot() || event2.getAuthor().isFake()) return false;
+                                                if (!event2.getMember().equals(member)) return false;
+                                                if (!event2.getChannel().equals(message.getTextChannel())) return false;
+                                                if (event.getMessage().getEmbeds().size() > 0) return false;
+
                                                 boolean lengthOkay = event2.getMessage().getContentRaw().length() <= 1024;
                                                 if (!lengthOkay) {
                                                     message.getTextChannel().sendMessage(new EmbedBuilder().setColor(Color.RED).setTitle("Maximum length is 1024 characters. Try again.").build()).queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
                                                     return false;
                                                 }
 
-                                                return event2.getMember() != null && event2.getMember().equals(member) && event2.getChannel().equals(message.getTextChannel());
+                                                return true;
                                             },
                                             event2 -> {
                                                 String promptDescription = event2.getMessage().getContentRaw();
