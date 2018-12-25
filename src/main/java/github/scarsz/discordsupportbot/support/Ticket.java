@@ -15,7 +15,6 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
@@ -348,7 +347,7 @@ public class Ticket extends ListenerAdapter {
         }
     }
 
-    private void setStatus(Status status) {
+    public void setStatus(Status status) {
         setStatus(status, null);
     }
 
@@ -520,15 +519,6 @@ public class Ticket extends ListenerAdapter {
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         if (event.getChannel().getId().equals(channelId) && getStartingMessage() != null && event.getMessageId().equals(getStartingMessage().getId())) {
             destroy();
-        }
-    }
-
-    @Override
-    public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-        if (helpdesk.getConfig().shouldMarkAsSolvedOnAbandon()) {
-            helpdesk.getTickets().stream()
-                    .filter(ticket -> event.getUser() == null || ticket.authorId.equals(event.getUser().getId()))
-                    .forEach(ticket -> ticket.setStatus(Status.ABANDONED));
         }
     }
 

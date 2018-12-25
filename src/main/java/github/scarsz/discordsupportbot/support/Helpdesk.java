@@ -15,6 +15,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.channel.category.CategoryDeleteEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -167,6 +168,15 @@ public class Helpdesk extends ListenerAdapter {
     public void onCategoryDelete(CategoryDeleteEvent event) {
         if (event.getCategory().equals(getCategory())) {
             destroy();
+        }
+    }
+
+    @Override
+    public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+        if (getConfig().shouldMarkAsSolvedOnAbandon()) {
+            tickets.stream()
+                    .filter(ticket -> event.getUser() == null || ticket.getAuthorId().equals(event.getUser().getId()))
+                    .forEach(ticket -> ticket.setStatus(Status.ABANDONED));
         }
     }
 
