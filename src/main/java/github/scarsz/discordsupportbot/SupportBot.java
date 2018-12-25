@@ -237,8 +237,14 @@ public class SupportBot {
     }
 
     public Set<Helpdesk> getHelpdesks() {
-        helpdesks.remove(null);
-        return helpdesks;
+        helpdesks.stream().filter(helpdesk -> helpdesk.getCategory() == null).collect(Collectors.toSet()).forEach(helpdesk -> {
+            helpdesk.destroy();
+            helpdesks.remove(helpdesk);
+        });
+
+        return helpdesks.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
     public Helpdesk getHelpdesk(UUID uuid) {
         return getHelpdesks().stream()
