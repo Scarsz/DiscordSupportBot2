@@ -58,10 +58,10 @@ public class Helpdesk extends ListenerAdapter {
         statement.setString(1, uuid.toString());
         ResultSet result = statement.executeQuery();
         result.next();
-        categoryId = result.getString("category");
-        if (getCategory() == null) throw new DataInvalidException(this, "category invalid", result.getString("category"));
         startingChannelId = result.getString("startingChannel");
-        if (getStartingChannel() == null) throw new DataInvalidException(this, "startingChannel invalid", result.getString("startingChannel"));
+        if (startingChannelId == null || SupportBot.get().getJda().getTextChannelById(startingChannelId) == null) throw new DataInvalidException(this, "startingChannel invalid", result.getString("startingChannel"));
+        categoryId = result.getString("category");
+        if (categoryId == null || SupportBot.get().getJda().getCategoryById(categoryId) == null) throw new DataInvalidException(this, "category invalid", result.getString("category"));
         ticketCounter = new AtomicInteger(result.getInt("counter"));
         statement.close();
 
@@ -232,8 +232,9 @@ public class Helpdesk extends ListenerAdapter {
     }
 
     public void destroy() {
+        System.out.println("Destroying " + this);
         SupportBot.get().getJda().removeEventListener(this);
-        SupportBot.get().getHelpdesks(false).remove(this);
+        SupportBot.get().getHelpdesks().remove(this);
         new ArrayList<>(tickets).forEach(Ticket::destroy);
 
         // remove from database
@@ -247,7 +248,7 @@ public class Helpdesk extends ListenerAdapter {
     }
 
     public Category getCategory() {
-        return SupportBot.get().getJda().getCategoryById(categoryId);
+        return getStartingChannel() != null ? getStartingChannel().getGuild().getCategoryById(categoryId) : null;
     }
 
     public TextChannel getStartingChannel() {
