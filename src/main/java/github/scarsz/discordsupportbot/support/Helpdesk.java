@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class Helpdesk extends ListenerAdapter {
 
@@ -176,6 +177,7 @@ public class Helpdesk extends ListenerAdapter {
         if (getConfig().shouldMarkAsSolvedOnAbandon()) {
             tickets.stream()
                     .filter(ticket -> event.getUser() == null || ticket.getAuthorId().equals(event.getUser().getId()))
+                    .collect(Collectors.toSet())
                     .forEach(ticket -> ticket.setStatus(Status.ABANDONED));
         }
     }
