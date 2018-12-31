@@ -100,21 +100,6 @@ public class SupportBot {
             }
         };
 
-//        TextChannel channel = jda.getTextChannelById("382266272877903885");
-//        MessageHistory history = channel.getHistory();
-//        int banned = 0;
-//        do {
-//            for (Message message : history.retrievePast(100).complete()) {
-//                if (message.getContentRaw().contains("We are Anonymous")) {
-//                    message.getGuild().getController().ban(message.getAuthor(), 7).complete();
-//                    banned++;
-//                } else {
-//                    history = null;
-//                }
-//            }
-//        } while (history != null);
-//        channel.sendMessage("banned " + banned).queue();
-
         // toasty
 //        Helpdesk helpdesk = new Helpdesk(
 //                jda.getCategoryById("469775207884914688"),
