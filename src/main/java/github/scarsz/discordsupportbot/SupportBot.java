@@ -159,6 +159,8 @@ public class SupportBot {
                 }
             }
         }).start();
+
+        database.setAutoCommit(true);
     }
 
     private void refreshRoles() {
@@ -189,14 +191,16 @@ public class SupportBot {
 
     private void flush() {
         try {
+            database.setAutoCommit(false);
             System.out.print("Saving " + helpdesks.size() + " helpdesks");
             getHelpdesks().forEach(helpdesk -> {
                 helpdesk.flush();
                 System.out.print(".");
             });
+            database.setAutoCommit(true);
             System.out.println();
-            System.out.println("Committing to database");
-            database.commit();
+//            System.out.println("Committing to database");
+//            database.commit();
             database.close();
         } catch (SQLException e) {
             e.printStackTrace();
