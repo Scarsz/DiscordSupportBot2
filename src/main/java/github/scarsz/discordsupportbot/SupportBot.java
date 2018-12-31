@@ -150,11 +150,13 @@ public class SupportBot {
         this.httpServer = new HttpServer();
 
         new Thread(() -> {
-            refreshRoles();
-            try {
-                Thread.sleep(TimeUnit.SECONDS.toMillis(60));
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            while (true) {
+                refreshRoles();
+                try {
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(60));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
