@@ -143,7 +143,18 @@ public class SupportBot {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        }, "Role refresher").start();
+
+        new Thread(() -> {
+            while (true) {
+                flush();
+                try {
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "Flusher").start();
 
         database.setAutoCommit(true);
     }
@@ -175,6 +186,10 @@ public class SupportBot {
     }
 
     private void flush() {
+        flush(false);
+    }
+
+    private void flush(boolean close) {
         try {
             database.setAutoCommit(false);
             System.out.print("Saving " + helpdesks.size() + " helpdesks");
@@ -182,11 +197,14 @@ public class SupportBot {
                 helpdesk.flush();
                 System.out.print(".");
             });
-            database.setAutoCommit(true);
             System.out.println();
+            System.out.print("Committing...");
+            database.commit();
+            System.out.println(" done");
+            database.setAutoCommit(true);
 //            System.out.println("Committing to database");
 //            database.commit();
-            database.close();
+            if (close) database.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -194,7 +212,7 @@ public class SupportBot {
 
     public void shutdown() {
         // write all data to database
-        flush();
+        flush(true);
 
         // kill voice channels
         for (Helpdesk helpdesk : getHelpdesks()) {
