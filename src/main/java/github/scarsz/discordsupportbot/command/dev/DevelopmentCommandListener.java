@@ -18,8 +18,8 @@ public class DevelopmentCommandListener extends ListenerAdapter {
         String command = event.getMessage().getContentRaw().replace(SupportBot.get().getJda().getSelfUser().getAsMention(), "").trim().toLowerCase();
 
         if (command.equals("stop") || command.equals("shutdown") || command.equals("restart")) {
-            for (ConfigurationMessage message : SupportBot.get().getConfigListener().getConfigurationMessages()) message.getMessage().editMessage("Bot is being restarted, this message will no longer work.").complete();
-//            event.getMessage().addReaction(Emoji.WHITE_CHECK_MARK).complete();
+            for (ConfigurationMessage message : SupportBot.get().getConfigListener().getConfigurationMessages())
+                message.getMessage().editMessage("Bot is being restarted, this message will no longer work.").complete();
             event.getMessage().delete().complete();
             Runtime.getRuntime().removeShutdownHook(SupportBot.get().getShutdownThread());
             SupportBot.get().shutdown();
