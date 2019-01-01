@@ -147,12 +147,12 @@ public class SupportBot {
 
         new Thread(() -> {
             while (true) {
-                flush();
                 try {
                     Thread.sleep(TimeUnit.MINUTES.toMillis(5));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                flush();
             }
         }, "Flusher").start();
 
