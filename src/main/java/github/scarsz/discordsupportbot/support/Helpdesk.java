@@ -9,24 +9,22 @@ import github.scarsz.discordsupportbot.util.NumberUtil;
 import lombok.Getter;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Category;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.channel.category.CategoryDeleteEvent;
 import net.dv8tion.jda.core.events.channel.text.TextChannelDeleteEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.awt.*;
 import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -70,8 +68,9 @@ public class Helpdesk extends ListenerAdapter {
         prompts = Prompt.collect(this);
         tickets = Ticket.collect(this);
 
+        System.out.println("Guild -> " + SupportBot.get().getJda().getTextChannelById(startingChannelId).getGuild());
+
         SupportBot.get().getJda().addEventListener(this);
-        System.out.println();
     }
 
     /**
@@ -234,6 +233,16 @@ public class Helpdesk extends ListenerAdapter {
     }
 
     public void destroy() {
+        Guild guild = startingChannelId != null && SupportBot.get().getJda().getTextChannelById(startingChannelId) != null
+                ? getStartingChannel().getGuild()
+                : categoryId != null && SupportBot.get().getJda().getCategoryById(categoryId) != null
+                        ? getCategory().getGuild()
+                        : null;
+        List<String> info = new LinkedList<>();
+        info.add("Guild -> " + guild);
+        info.add("```\n" + Arrays.stream(ExceptionUtils.getStackTrace(new Throwable()).split("\n")).map(String::trim).filter(s -> s.contains("scarsz")).collect(Collectors.joining("\n")) + "\n```");
+        SupportBot.get().getJda().getTextChannelById("530696542164615168").sendMessage(String.join("\n", info)).queue();
+
         System.out.println("Destroying " + this);
         SupportBot.get().getJda().removeEventListener(this);
         SupportBot.get().getHelpdesks().remove(this);

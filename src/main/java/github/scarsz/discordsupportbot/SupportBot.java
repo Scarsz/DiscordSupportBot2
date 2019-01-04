@@ -73,6 +73,12 @@ public class SupportBot {
 //        modifiersField.setInt(slf4J_enabled, slf4J_enabled.getModifiers() & ~Modifier.FINAL);
 //        slf4J_enabled.set(null, false);
 
+//        Logger logger = JDALogger.getLog(WebSocketClient.class);
+//        Class<? extends Logger> simpleLoggerClass = logger.getClass();
+//        Field currentLogLevelField = simpleLoggerClass.getDeclaredField("currentLogLevel");
+//        currentLogLevelField.setAccessible(true);
+//        currentLogLevelField.set(logger, 0);
+
         jda = new JDABuilder(AccountType.BOT)
                 .setAudioEnabled(false)
                 .setBulkDeleteSplittingEnabled(false)
