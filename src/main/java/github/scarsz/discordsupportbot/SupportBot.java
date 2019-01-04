@@ -154,7 +154,7 @@ public class SupportBot {
         new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+                    Thread.sleep(TimeUnit.MINUTES.toMillis(15));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
