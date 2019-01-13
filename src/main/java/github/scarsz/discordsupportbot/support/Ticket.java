@@ -474,7 +474,7 @@ public class Ticket extends ListenerAdapter {
                 .setTitle("A transcript is available for ticket " + number)
                 .setThumbnail(getAuthor() == null ? getChannel().getGuild().getIconUrl() : getAuthor().getEffectiveAvatarUrl())
                 .setDescription(transcript.getUrl())
-                .addField("Description", getInitialMessage(), false)
+                .addField("Description", getInitialMessage().length() > 1024 ? getInitialMessage().substring(0, 1024) : getInitialMessage(), false)
                 .addField("Helpdesk", "[" + getChannel().getGuild().getName() + " #" + getHelpdesk().getStartingChannel().getName() + "](https://discordapp.com/channels/" + getChannel().getGuild().getId() + "/" + getHelpdesk().getStartingChannel().getId() + ")", true)
                 .addField("Reporting party", (getMember() != null ? getMember().getEffectiveName() + " [`" + getAuthor().getName() + "#" + getAuthor().getDiscriminator() + "`]" : "Author abandoned server") + " `[ID " + authorId + "]`", true)
                 .build();
