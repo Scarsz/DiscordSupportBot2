@@ -245,7 +245,7 @@ public class Helpdesk extends ListenerAdapter {
 
         System.out.println("Destroying " + this);
         SupportBot.get().getJda().removeEventListener(this);
-        SupportBot.get().getHelpdesks().remove(this);
+        SupportBot.get().helpdesks.remove(this);
         new ArrayList<>(tickets).forEach(Ticket::destroy);
 
         // remove from database

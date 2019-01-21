@@ -41,7 +41,7 @@ public class SupportBot {
 
     private static SupportBot SUPPORT_BOT;
 
-    private final Set<Helpdesk> helpdesks = new HashSet<>();
+    public final Set<Helpdesk> helpdesks = new HashSet<>();
     @Getter private final Connection database;
     @Getter private final JDA jda;
     @Getter private final HttpServer httpServer;
@@ -253,6 +253,7 @@ public class SupportBot {
 
     public Set<Helpdesk> getHelpdesks() {
         helpdesks.remove(null);
+        helpdesks.stream().filter(helpdesk -> helpdesk.getCategory() == null).forEach(Helpdesk::destroy);
         return helpdesks;
     }
     public Helpdesk getHelpdesk(UUID uuid) {
