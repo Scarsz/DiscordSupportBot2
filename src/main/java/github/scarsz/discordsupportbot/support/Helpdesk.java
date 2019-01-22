@@ -265,7 +265,6 @@ public class Helpdesk extends ListenerAdapter {
     public TextChannel getStartingChannel() {
         TextChannel channel = SupportBot.get().getJda().getTextChannelById(startingChannelId);
         if (channel == null) {
-            destroy();
             return null;
         } else {
             return channel;
