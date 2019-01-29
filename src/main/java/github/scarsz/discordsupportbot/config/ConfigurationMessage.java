@@ -18,8 +18,8 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -51,7 +51,7 @@ public class ConfigurationMessage extends ListenerAdapter {
     }
 
     public Message getMessage() {
-        return getChannel().getMessageById(messageId).complete();
+        return getChannel().getMessageById(messageId).submit().join();
     }
 
     public Member getMember() {
@@ -93,7 +93,7 @@ public class ConfigurationMessage extends ListenerAdapter {
 //            });
 //        }
         try {
-            getMessage().clearReactions().queue();
+            getMessage().clearReactions().submit().join();
         } catch (ErrorResponseException e) {
             dead = true;
         }
