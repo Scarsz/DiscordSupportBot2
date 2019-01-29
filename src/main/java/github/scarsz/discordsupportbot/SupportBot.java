@@ -206,8 +206,8 @@ public class SupportBot {
             System.out.println();
             System.out.print("Committing...");
             database.commit();
-            System.out.println(" done");
             database.setAutoCommit(true);
+            System.out.println(" done");
 //            System.out.println("Committing to database");
 //            database.commit();
             if (close) database.close();
